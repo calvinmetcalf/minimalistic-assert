@@ -6,6 +6,17 @@ function assert(val, msg) {
 }
 
 assert.equal = function assertEqual(l, r, msg) {
+  var err;
+
   if (l != r)
-    throw new Error(msg || ('Assertion failed: ' + l + ' != ' + r));
+    err = new Error(msg || ('Assertion failed: ' + l + ' != ' + r));
+    err.name = 'AssertionError';
+    err.actual = l;
+    err.expected = r;
+    err.operator = '==';
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(err, assert.equal);
+    }
+
+    throw err;
 };
